@@ -1,0 +1,32 @@
+{% extends "main/wrapper.html" %}
+
+{% block content %}
+
+<div class="pu_div"></div>
+<div class="text-center container-fluid">
+  <div class="row">
+    <div class="col-sx-12 col-sm-12 col-md-1 col-lg-2 padding_low"></div>
+    <div class="col-sx-12 col-sm-12 col-md-10 col-lg-8 padding_low">
+      <div class="header">
+        <h1 class="header_log logo">Пользователи</h1>
+      </div>
+      <div class="top_menu"></div>
+      <div id="navigation"></div>
+      </div>
+    <div class="col-sx-12 col-sm-12 col-md-1 col-lg-2 padding_low"></div>
+  </div>
+</div>
+
+
+<div class="text-center container-fluid">
+  <div class="row">
+    <div class="col-sx-12 col-sm-12 col-md-1 col-lg-2 padding_low"></div>
+    <div class="col-sx-12 col-sm-5 col-md-4 col-lg-3 padding_low">{% include "users/includes/name.html" %}</div>
+    <div class="col-sx-12 col-sm-7 col-md-6 col-lg-5 padding_low" id="block_info">{% include "users/includes/info_all.html" %}</div>
+    <div class="col-sx-12 col-sm-12 col-md-1 col-lg-2 padding_low"></div>
+  </div>
+</div>
+
+<div class="pu_div"></div>
+{% include "users/includes/footer.html" %}
+{% endblock %}

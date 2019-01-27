@@ -1,0 +1,21 @@
+<div class="side_left">
+  <div class="content_block">
+
+    <h4>Finger</h4>
+    <br/>
+
+    {% for fin in finger %}
+      <div class="content_bord">
+        <h5 {% if fin.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %}>{{fin.finger}}</h5>
+        <p class="btn btn_lite">Удалить</p>
+        <p class="btn btn_lite"> {% if fin.activ %} Деактевировать {% else %} Актевировать {% endif %} </p>
+      </div>
+    {% endfor %}
+    <div class="content_bord hidden" id="add_finger">
+      <h5>Приложите палец</h5>
+      <p>Следуйте инструкции</p>
+    </div>
+    <p class="btn btn_lite" id="bth_finger">Добавить</p>
+
+  </div>
+</div>

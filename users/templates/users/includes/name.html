@@ -1,0 +1,10 @@
+<div id="nav_user">
+
+  <div class="btn side_left spoler_name" id="link_id">Выбрать</div>
+  <div class="side_left" id="list_name">
+  {% for post in contact %}
+    <p class="btn btn_menu" id="user_{{post.id}}">{{post.name}} {{post.firstname}}</p>
+  {% endfor %}
+
+  </div>
+</div>

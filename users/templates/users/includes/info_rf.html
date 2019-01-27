@@ -1,0 +1,27 @@
+<div class="side_left">
+  <div class="content_block">
+
+    <h4>RF</h4>
+    <br/>
+    {% for r in rf %}
+      <div class="content_bord">
+        <h5 {% if r.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %}>{{r.rf}}</h5>
+        <p class="btn btn_lite">Удалить</p>
+        <p class="btn btn_lite"> {% if f.activ %} Деактевировать {% else %} Актевировать {% endif %} </p>
+      </div>
+    {% endfor %}
+
+
+    <div class="content_bord hidden" id="add_rf">
+      <div class="container">
+          <div class="row"> <h5 class="col-sx-12 col-sm-12 col-md-12 col-lg-7">На открытие</h5><p class="btn btn_lite col-sx-12 col-sm-12 col-md-12 col-lg-4">Записать</p> </div>
+          <div class="row"> <h5 class="col-sx-12 col-sm-12 col-md-12 col-lg-7">На закрытие</h5><p class="btn btn_lite col-sx-12 col-sm-12 col-md-12 col-lg-4">Записать</p> </div>
+      </div>
+      <p>Запишите в 2 параметра</p>
+      <p class="btn btn_lite">Подтвердить</p>
+    </div>
+    <p class="btn btn_lite" id="bth_rf">Добавить</p>
+
+
+  </div>
+</div>

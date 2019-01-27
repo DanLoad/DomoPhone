@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compable" content="ie=edge">
+	<title>DomoPhone</title>
+  {% load staticfiles %}
+  <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" type="text/css">
+  <script type="text/javascript" src="{% static 'jquery/jquery-3.3.1.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'script/users.js' %}"></script>
+  <script type="text/javascript" src="{% static 'script/spoler_name.js' %}"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/button.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/content.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/adaptation.css' %}" />
+</head>
+<body background="{% static 'images/images.jpg' %}">
+{% block content %}
+{% endblock %}
+</body>
+</html>

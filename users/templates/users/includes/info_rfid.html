@@ -1,0 +1,19 @@
+<div class="side_left">
+  <div class="content_block">
+
+    <h4>RFID</h4>
+    <br/>
+    {% for uid in rfid %}
+      <div class="content_bord">
+        <h5 {% if uid.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %}>{{uid.rfid}}</h5>
+        <p class="btn btn_lite">Удалить</p>
+        <p class="btn btn_lite"> {% if uid.activ %} Деактевировать {% else %} Актевировать {% endif %} </p>
+      </div>
+    {% endfor %}
+    <div class="content_bord hidden" id="add_rfid">
+      <h5>Поднесите метку</h5>
+    </div>
+    <p class="btn btn_lite" id="bth_rfid">Добавить</p>
+
+  </div>
+</div>
