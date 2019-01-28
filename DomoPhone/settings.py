@@ -25,7 +25,7 @@ SECRET_KEY = 'mfg=sltj_lhn*ep^djs7fkufi_1eu+d(%*pa=!&5^4yr3h+*#^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.100','localhost','domophone.local']
 
 
 # Application definition
