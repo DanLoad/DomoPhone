@@ -36,12 +36,19 @@ INSTALLED_APPS = [
     'settings',
     'users',
 
+    "django_cron",
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
+
+CRON_CLASSES = [
+    "DomoPhone.cron.Setup",
+    "DomoPhone.cron.Loop",
 ]
 
 MIDDLEWARE = [
@@ -124,7 +131,7 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/static/'
+STATIC_ROOT = ''
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
