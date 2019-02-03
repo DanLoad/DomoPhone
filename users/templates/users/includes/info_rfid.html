@@ -5,8 +5,9 @@
     <br/>
     {% for uid in rfid %}
       <div class="content_bord">
-        <h5 {% if uid.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %}>{{uid.rfid}}</h5>
-        <p class="btn btn_lite">Удалить</p>
+
+        <h5 {% if uid.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %} id="rfid_{{uid.id}}">{{uid.rfid}}</h5>
+        <p class="btn btn_lite delete_rfid" id="rfid_{{uid.id}}">Удалить</p>
         <p class="btn btn_lite"> {% if uid.activ %} Деактевировать {% else %} Актевировать {% endif %} </p>
       </div>
     {% endfor %}

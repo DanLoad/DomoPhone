@@ -7,7 +7,7 @@
     {% for fin in finger %}
       <div class="content_bord">
         <h5 {% if fin.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %}>{{fin.finger}}</h5>
-        <p class="btn btn_lite">Удалить</p>
+        <p class="btn btn_lite delete_finger" id="finger_{{fin.id}}">Удалить</p>
         <p class="btn btn_lite"> {% if fin.activ %} Деактевировать {% else %} Актевировать {% endif %} </p>
       </div>
     {% endfor %}

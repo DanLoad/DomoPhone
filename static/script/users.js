@@ -18,7 +18,7 @@ $(document).ready(function(){
       }
 
 
-    $.get("users/user_owned/", {cmd: 'user', index: $(this).attr("id") }, function(data) {
+    $.get("users/user_owned/", {cmd: 'user', user: $(this).attr("id") }, function(data) {
        $("#block_all_info").remove();
        $("#block_user_info").remove();
        $('#block_info').append(data);
@@ -26,7 +26,7 @@ $(document).ready(function(){
   });
 
   $('body').on('click', '.header_log', function(){
-    $.get("users/user_owned/", {cmd: 'all'}, function(data) {
+    $.get("users/all_owned/", {cmd: 'all'}, function(data) {
       $("#block_all_info").remove();
       $("#block_user_info").remove();
       $('#block_info').append(data);
@@ -73,12 +73,39 @@ $(document).ready(function(){
           $("#add_finger").hide();
           $('#bth_finger').text("Добавить");
         }
+      });
 
-    //$.get("users/user_owned/", {cmd: 'all'}, function(data) {
-    //  $("#block_all_info").remove();
-    //  $("#block_user_info").remove();
-    //  $('#block_info').append(data);
-    //});
-  });
+      $('body').on('click', '.delete_rfid', function(){
+
+        if(confirm("Вы действительно хотите удалить?")) {
+            $.get("users/rfid_owned/", {cmd: 'delete', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
+             $("#block_all_info").remove();
+             $("#block_user_info").remove();
+             $('#block_info').append(data);
+           });
+        }
+      });
+
+      $('body').on('click', '.delete_rf', function(){
+
+        if(confirm("Вы действительно хотите удалить?")) {
+            $.get("users/rf_owned/", {cmd: 'delete', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
+             $("#block_all_info").remove();
+             $("#block_user_info").remove();
+             $('#block_info').append(data);
+           });
+        }
+      });
+
+      $('body').on('click', '.delete_finger', function(){
+
+        if(confirm("Вы действительно хотите удалить?")) {
+            $.get("users/finger_owned/", {cmd: 'delete', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
+             $("#block_all_info").remove();
+             $("#block_user_info").remove();
+             $('#block_info').append(data);
+           });
+        }
+      });
 
 });
