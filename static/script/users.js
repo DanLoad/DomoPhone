@@ -10,7 +10,7 @@ $(document).ready(function(){
       if (mql1.matches) {
         $("#list_name").hide();
      		if (nsc<bp1) {
-     		$("#nav_user").css({"background": ""});
+     		   $("#nav_user").css({"background": ""});
      		}
      	if (nsc<bp1) {
      		$("#nav_user").css({"position": "relative"});
@@ -33,14 +33,24 @@ $(document).ready(function(){
     });
   });
 
+
+//Добавить
   $('body').on('click', '#bth_rfid', function(){
     if ($('#bth_rfid').text() == "Добавить") {
 
       $("#add_rfid").show();
       $("#add_rf").hide(); $('#bth_rf').text("Добавить");
       $("#add_finger").hide(); $('#bth_finger').text("Добавить");
+      $('#bth_rfid').text("Отмена");
 
-      $('#bth_rfid').text("Отмена")
+      $.get("users/rfid_owned/", {cmd: 'add', user: $(".btn_active").attr("id") }, function(data) {
+         $("#block_all_info").remove();
+         $("#block_user_info").remove();
+         $('#block_info').append(data);
+       });
+
+
+
     } else if ($('#bth_rfid').text() == "Отмена") {
       $("#add_rfid").hide();
       $('#bth_rfid').text("Добавить");
@@ -53,8 +63,12 @@ $(document).ready(function(){
         $("#add_rfid").hide(); $('#bth_rfid').text("Добавить");
         $("#add_rf").show();
         $("#add_finger").hide(); $('#bth_finger').text("Добавить");
+        $('#bth_rf').text("Отмена");
 
-        $('#bth_rf').text("Отмена")
+        $.get("users/rf_owned/", {cmd: 'add', user: $(".btn_active").attr("id") }, function(data) {
+           alert(data);
+         });
+
       } else if ($('#bth_rf').text() == "Отмена") {
         $("#add_rf").hide();
         $('#bth_rf').text("Добавить");
@@ -67,16 +81,17 @@ $(document).ready(function(){
           $("#add_rfid").hide(); $('#bth_rfid').text("Добавить");
           $("#add_rf").hide(); $('#bth_rf').text("Добавить");
           $("#add_finger").show();
+          $('#bth_finger').text("Отмена");
 
-          $('#bth_finger').text("Отмена")
         } else if ($('#bth_finger').text() == "Отмена") {
           $("#add_finger").hide();
           $('#bth_finger').text("Добавить");
         }
       });
 
-      $('body').on('click', '.delete_rfid', function(){
 
+//Удалить
+      $('body').on('click', '.delete_rfid', function(){
         if(confirm("Вы действительно хотите удалить?")) {
             $.get("users/rfid_owned/", {cmd: 'delete', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
              $("#block_all_info").remove();
@@ -87,7 +102,6 @@ $(document).ready(function(){
       });
 
       $('body').on('click', '.delete_rf', function(){
-
         if(confirm("Вы действительно хотите удалить?")) {
             $.get("users/rf_owned/", {cmd: 'delete', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
              $("#block_all_info").remove();
@@ -98,7 +112,6 @@ $(document).ready(function(){
       });
 
       $('body').on('click', '.delete_finger', function(){
-
         if(confirm("Вы действительно хотите удалить?")) {
             $.get("users/finger_owned/", {cmd: 'delete', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
              $("#block_all_info").remove();
@@ -107,5 +120,33 @@ $(document).ready(function(){
            });
         }
       });
+
+
+//Актевировать - Деактевировать
+      $('body').on('click', '.change_activ_rfid', function(){
+            $.get("users/rfid_owned/", {cmd: 'activ', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
+             $("#block_all_info").remove();
+             $("#block_user_info").remove();
+             $('#block_info').append(data);
+           });
+      });
+
+      $('body').on('click', '.change_activ_rf', function(){
+            $.get("users/rf_owned/", {cmd: 'activ', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
+             $("#block_all_info").remove();
+             $("#block_user_info").remove();
+             $('#block_info').append(data);
+           });
+      });
+
+      $('body').on('click', '.change_activ_finger', function(){
+            $.get("users/finger_owned/", {cmd: 'activ', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
+             $("#block_all_info").remove();
+             $("#block_user_info").remove();
+             $('#block_info').append(data);
+           });
+      });
+
+
 
 });

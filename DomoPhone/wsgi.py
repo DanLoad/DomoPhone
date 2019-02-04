@@ -12,7 +12,8 @@ import time
 import traceback
 import signal
 import sys
-from django.core.management import call_command 
+from django.core.management import call_command
+from django.core import management
 from django.core.wsgi import get_wsgi_application
 
 sys.path.append('/var/www/DomoPhone')
@@ -29,5 +30,7 @@ except Exception:
         traceback.print_exc()
         os.kill(os.getpid(), signal.SIGINT)
         time.sleep(2.5)
-
-call_command('runcrons')
+management.call_command('runcrons', pythonpath='/var/www/DomoPhone')
+#call_command('runcrons')
+# with open('/var/www/DomoPhone') as f:
+#     management.call_command('runcrons')
