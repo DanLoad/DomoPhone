@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'settings',
     'users',
 
-    "django_cron",
+    'django_crontab',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -80,7 +80,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'DomoPhone.wsgi.application'
+CRONTAB_COMMAND_SUFFIX = '2>&1'
 
+CRONJOBS = [
+    #("* * * * *", 'main.cron.Setup', '>> /home/log/setup.log'),
+    ("* * * * *", 'main.cron.Loop', '>> /home/log/loop.log')
+]
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases

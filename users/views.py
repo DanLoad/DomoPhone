@@ -85,14 +85,12 @@ def rfid_owned(request):
         rfid = Rfid.objects.filter(contact = user)
         rf = RF.objects.filter(contact = user)
         finger = Finger.objects.filter(contact = user)
-        status = My_variable.objects.get(name = "add_new_rfid")
-        status.value = "add"
-        status.save()
         user_rfid = My_variable.objects.get(name = "user")
         user_rfid.value = user
         user_rfid.save()
-        while status.value == "add":
-            rdd = 0
+        status = My_variable.objects.get(name = "add_new_rfid")
+        status.value = "add"
+        status.save()
 
         return render(request, 'users/includes/own_user.html', locals())
     else:
