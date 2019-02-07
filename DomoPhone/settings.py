@@ -81,6 +81,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DomoPhone.wsgi.application'
 CRONTAB_COMMAND_SUFFIX = '2>&1'
+CRONTAB_LOCK_JOBS = True
 
 CRONJOBS = [
     #("* * * * *", 'main.cron.Setup', '>> /home/log/setup.log'),

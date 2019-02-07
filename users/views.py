@@ -77,22 +77,34 @@ def rfid_owned(request):
 
         return render(request, 'users/includes/own_user.html', locals())
 
-    elif request.GET and "add" == request.GET["cmd"]:
+    elif request.GET and "add_start" == request.GET["cmd"]:
         user = request.GET["user"]
         user = user[5:]
 
-        contact = Contact.objects.get(id = user)
-        rfid = Rfid.objects.filter(contact = user)
-        rf = RF.objects.filter(contact = user)
-        finger = Finger.objects.filter(contact = user)
         user_rfid = My_variable.objects.get(name = "user")
         user_rfid.value = user
         user_rfid.save()
         status = My_variable.objects.get(name = "add_new_rfid")
         status.value = "add"
         status.save()
+        return HttpResponse("Поднесите RFID метку к считывателю")
 
-        return render(request, 'users/includes/own_user.html', locals())
+    elif request.GET and "add_change" == request.GET["cmd"]:
+
+        status = My_variable.objects.get(name = "add_new_rfid")
+        if status.value == "add":
+            return HttpResponse("NO")
+        else:
+            user = request.GET["user"]
+            user = user[5:]
+
+            contact = Contact.objects.get(id = user)
+            rfid = Rfid.objects.filter(contact = user)
+            rf = RF.objects.filter(contact = user)
+            finger = Finger.objects.filter(contact = user)
+
+            return render(request, 'users/includes/own_user.html', locals())
+
     else:
         pass
 
