@@ -18,10 +18,10 @@ def Read_uid():
         if status.value == "add":
             Add_uid(status)
         else:
-            Change_uid()
+            Check_uid()
 
-
-def Change_uid():
+#Считывание меток и проверка на разрешение открыть
+def Check_uid():
     global Delay_read
     if time.time() > Delay_read:
         if uart.inWaiting() > 0:
@@ -49,7 +49,7 @@ def Change_uid():
     else:
         uart.flushInput()
 
-
+#Считывание меток и проверка на доступность записи
 def Add_uid(status):
     print ("add")
     uart.flushInput()
@@ -68,19 +68,31 @@ def Add_uid(status):
                         ID = ID + read_add.decode()
                 print(ID)
                 if re.match("^[A-Za-z0-9]*$", ID):
+                    uids = Rfid.objects.filter(rfid = ID)
+                    value = uids.count()
                     dis = My_variable.objects.get(name = "user")
-                    contact = Contact.objects.get(id = dis.value)
-                    dis = ""
-                    add_uid = Rfid()
-                    add_uid.rfid = ID
-                    add_uid.contact = contact
-                    add_uid.save()
-                    print (">>>>>>>>>>>>>>>+++++++")
-                    print (contact)
-                    status.value = "add_rfid"
-                    status.save()
-                    uart.flushInput()
-                    break
+                    if value == 0:
+                        contact = Contact.objects.get(id = dis.value)
+                        add_uid = Rfid()
+                        add_uid.rfid = ID
+                        add_uid.contact = contact
+                        add_uid.save()
+                        print (">>>>>>>>>>>>>>>+++++++")
+                        print (contact)
+                        status.value = "add_rfid"
+                        status.save()
+                        uart.flushInput()
+                        break
+                    else:
+                        str = "Эта метка принадлежит:"
+                        print_info = My_variable.objects.get(name = "print")
+                        for uid in uids:
+                             str = str + "<br/>" + uid.contact.name + " " + uid.contact.firstname
+                        print_info.value = str
+                        print_info.save()
+                        status.value = "add_no"
+                        status.save()
+                        break
                 else:
                     ID = ""
 
