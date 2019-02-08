@@ -1,5 +1,5 @@
 # DomoPhone
-
+![](https://img.shields.io/github/repo-size/DanLoad/DomoPhone.svg?style=flat)
 ## Реализованно
 
   - RFID
