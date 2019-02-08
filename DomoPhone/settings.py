@@ -84,8 +84,8 @@ CRONTAB_COMMAND_SUFFIX = '2>&1'
 CRONTAB_LOCK_JOBS = True
 
 CRONJOBS = [
-    #("* * * * *", 'main.cron.Setup', '>> /home/log/setup.log'),
-    ("* * * * *", 'main.cron.Loop', '>> /home/log/loop.log')
+    ("* * * * *", 'main.cron.Finger_loop', '>> /home/log/finger_loop.log'),
+    ("* * * * *", 'main.cron.Rfid_loop', '>> /home/log/rfid_loop.log')
 ]
 
 # Database

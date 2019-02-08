@@ -7,7 +7,7 @@
       <div class="content_bord">
         <h5 {% if r.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %}>{{r.rf}}</h5>
         <p class="btn btn_lite delete_rf" id="rf_{{r.id}}">Удалить</p>
-        <p class="btn btn_lite change_activ_rf" id="rf_activ_{{r.id}}"> {% if f.activ %} Деактевировать {% else %} Актевировать {% endif %} </p>
+        <p class="btn btn_lite change_activ_rf" id="rf_activ_{{r.id}}"> {% if r.activ %} Деактевировать {% else %} Актевировать {% endif %} </p>
       </div>
     {% endfor %}
 

@@ -6,7 +6,6 @@ from users.settings import *
 from settings.models import *
 import json
 
-# Create your views here.
 def index(request):
     if not request.GET:
         contact = Contact.objects.filter()
@@ -84,23 +83,23 @@ def rfid_owned(request):
         user = request.GET["user"]
         user = user[5:]
 
-        user_rfid = My_variable.objects.get(name = "user")
+        user_rfid = My_variable.objects.get(name = "rfid_user")
         user_rfid.value = user
         user_rfid.save()
-        status = My_variable.objects.get(name = "add_new_rfid")
+        status = My_variable.objects.get(name = "rfid_status")
         status.value = "add"
         status.save()
         return HttpResponse("Поднесите RFID метку к считывателю")
 
     elif request.GET and "add_check" == request.GET["cmd"]:
-        info = My_variable.objects.get(name = "print")
-        status = My_variable.objects.get(name = "add_new_rfid")
+        info = My_variable.objects.get(name = "rfid_print")
+        status = My_variable.objects.get(name = "rfid_status")
         if status.value == "add":
             #return json.dumps({'cmd': "add"})
             return HttpResponse('{"cmd": "add"}')
             #return HttpResponse("add")
         elif status.value == "add_no":
-            My_variable.objects.get(name = "print")
+            My_variable.objects.get(name = "rfid_print")
             #return json.dumps({'cmd': "add_no", 'data': info.value})
             #HttpResponse(My_variable.objects.get(name = "print"))
             return HttpResponse('{"cmd": "add_no", "data": "' + info.value + '"}')

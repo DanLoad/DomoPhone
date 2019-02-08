@@ -1,4 +1,3 @@
-
 import serial
 import time
 import binascii
@@ -7,21 +6,19 @@ from settings.models import *
 from users.models import *
 import re
 
-Tag1 = str('22009C45F40F')
-uart = serial.Serial("/dev/ttyS2", baudrate=9600, timeout=3000)
 Delay_read = 0
 activ_add_uid = False
 
-def Read_uid():
+def Read_uid(uart):
     if uart.isOpen():
-        status = My_variable.objects.get(name = "add_new_rfid")
+        status = My_variable.objects.get(name = "rfid_status")
         if status.value == "add":
-            Add_uid(status)
+            Add_uid(status, uart)
         else:
-            Check_uid()
+            Check_uid(uart)
 
 #Считывание меток и проверка на разрешение открыть
-def Check_uid():
+def Check_uid(uart):
     global Delay_read
     if time.time() > Delay_read:
         if uart.inWaiting() > 0:
@@ -43,14 +40,15 @@ def Check_uid():
                 print (ID)
                 if re.match("^[A-Za-z0-9]*$", ID):
                     print("open door>>>>>>>>>>>>>")
+                    Delay_read = time.time() + 3
                 else:
                     uart.flushInput()
-                Delay_read = time.time() + 3
+
     else:
         uart.flushInput()
 
 #Считывание меток и проверка на доступность записи
-def Add_uid(status):
+def Add_uid(status, uart):
     print ("add")
     uart.flushInput()
     Delay_add = time.time() + 5
@@ -70,7 +68,7 @@ def Add_uid(status):
                 if re.match("^[A-Za-z0-9]*$", ID):
                     uids = Rfid.objects.filter(rfid = ID)
                     value = uids.count()
-                    dis = My_variable.objects.get(name = "user")
+                    dis = My_variable.objects.get(name = "rfid_user")
                     if value == 0:
                         contact = Contact.objects.get(id = dis.value)
                         add_uid = Rfid()
@@ -85,7 +83,7 @@ def Add_uid(status):
                         break
                     else:
                         str = '<div style=\\"color:red\\">Mетка: <br/>'+ID+"<br/>Принадлежит:"
-                        print_info = My_variable.objects.get(name = "print")
+                        print_info = My_variable.objects.get(name = "rfid_print")
                         for uid in uids:
                              str = str + "<br/>" + uid.contact.name + " " + uid.contact.firstname
                         str = str + "</div>"
