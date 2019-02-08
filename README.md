@@ -1,5 +1,5 @@
 # DomoPhone
-![](https://img.shields.io/github/download-size/DanLoad/DomoPhone.svg?style=flat) 
+![](https://img.shields.io/github/badge-size/DanLoad/DomoPhone.svg?style=flat) 
 ![](https://img.shields.io/github/languages/zip/DanLoad/DomoPhone.svg?style=flat)
 ## Реализованно
 
