@@ -97,13 +97,13 @@ def rfid_owned(request):
         status = My_variable.objects.get(name = "add_new_rfid")
         if status.value == "add":
             #return json.dumps({'cmd': "add"})
-            return HttpResponse("{'cmd': \"add\"}")
+            return HttpResponse('{"cmd": "add"}')
             #return HttpResponse("add")
         elif status.value == "add_no":
             My_variable.objects.get(name = "print")
             #return json.dumps({'cmd': "add_no", 'data': info.value})
             #HttpResponse(My_variable.objects.get(name = "print"))
-            return HttpResponse("{'cmd': \"add_no\", 'data': " + info.value + "}")
+            return HttpResponse('{"cmd": "add_no", "data": "' + info.value + '"}')
         else:
             user = request.GET["user"]
             user = user[5:]
@@ -113,8 +113,8 @@ def rfid_owned(request):
             rf = RF.objects.filter(contact = user)
             finger = Finger.objects.filter(contact = user)
 
-            return render(request, 'users/includes/own_user.html', locals())
-            #return json.dumps({'cmd': "add_off", 'data': info.value})
+            #return render(request, 'users/includes/own_user.html', locals())
+            return HttpResponse('{"cmd": "add_off"}')
 
     else:
         pass

@@ -84,10 +84,11 @@ def Add_uid(status):
                         uart.flushInput()
                         break
                     else:
-                        str = "Эта метка принадлежит:"
+                        str = '<div style=\\"color:red\\">Mетка: <br/>'+ID+"<br/>Принадлежит:"
                         print_info = My_variable.objects.get(name = "print")
                         for uid in uids:
                              str = str + "<br/>" + uid.contact.name + " " + uid.contact.firstname
+                        str = str + "</div>"
                         print_info.value = str
                         print_info.save()
                         status.value = "add_no"

@@ -55,7 +55,7 @@ $(document).ready(function(){
       });
 
        console.log("3");
-       turn = 6;
+       turn = 14;
        index = "on"
 
        //
@@ -166,23 +166,27 @@ $(document).ready(function(){
 window.setInterval(function(){
   if(index == "on" & turn > 0) {
     console.log(">>>");
-    $.get("users/rfid_owned/", {cmd: 'add_check', user: $(".btn_active").attr("id") }, function(data) {
+    $.get("users/rfid_owned/", {cmd: 'add_check', user: $(".btn_active").attr("id") }, function(json) {
       console.log("g1");
-      console.log(data);
-      if (data == "add") {
+      console.log(json);
+      comand = JSON.parse(json);
+      if (comand.cmd == "add") {
         turn = turn - 1;
-      } else if (data == "add_no") {
+      } else if (comand.cmd == "add_no") {
         console.log("g2>");
-        $('#add_info').text(data);
+        $('#add_info').html(comand.data);
         index = "off"
         turn = 0;
-      } else {
-        console.log("g3>");
-        $("#block_all_info").remove();
-        $("#block_user_info").remove();
-        $('#block_info').append(data);
-        turn = 0;
-        index = "off"
+      } else if (comand.cmd == "add_off") {
+        console.log("no>");
+        $.get("users/user_owned/", {cmd: 'user', user: $(".btn_active").attr("id") }, function(data) {
+          console.log("g3>");
+          $("#block_all_info").remove();
+          $("#block_user_info").remove();
+          $('#block_info').append(data);
+          turn = 0;
+          index = "off"
+        });
       }
     });
   }
