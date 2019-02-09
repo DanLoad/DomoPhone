@@ -4,7 +4,9 @@ from users.models import *
 from own.models import *
 from users.settings import *
 from settings.models import *
+from modules.Finger.Add import *
 import json
+
 
 def index(request):
     if not request.GET:
@@ -202,53 +204,38 @@ def finger_owned(request):
         user_finger = My_variable.objects.get(name = "finger_user")
         user_finger.value = user
         user_finger.save()
-        step = My_variable.objects.get(name = "finger_info")
-        step.value = "wait_1"
-        step.save()
-        status = My_variable.objects.get(name = "finger_status")
-        status.value = "add"
-        status.save()
+        Save_step("wait")
+        Save_status("add")
 
         return HttpResponse("Подождите...")
 
     elif request.GET and "add_check" == request.GET["cmd"]:
-        info = My_variable.objects.get(name = "finger_print")
-        status = My_variable.objects.get(name = "finger_status")
-        step = My_variable.objects.get(name = "finger_info")
-        if status.value == "add":
-            if step.value == "wait":
+        #info = My_variable.objects.get(name = "finger_print")
+        if Check_status("add"):
+            if Check_step("wait"):
                 return HttpResponse('{"cmd":"add", "step": "wait", "data": "Подождите..."}')
-            elif step.value == "wait_1":
+            elif Check_step("wait_1"):
                 return HttpResponse('{"cmd":"add", "step": "wait_1", "data": "Прикладите палец"}')
-            elif step.value == "remove":
+            elif Check_step("remove"):
                 return HttpResponse('{"cmd":"add", "step": "remove", "data": "Уберите палец"}')
-            elif step.value == "wait_2":
+            elif Check_step("wait_2"):
                 return HttpResponse('{"cmd":"add", "step": "wait_2", "data": "Сново прикладите палец"}')
-        elif status.value == "no":
-            if step.value == "exists":
+        elif Check_status("no"):
+            if Check_step("exists"):
                 return HttpResponse('{"cmd":"add", "step": "exists", "data": "Этот палец существует"}')
-            elif step.value == "not_match":
+            elif Check_step("not_match"):
                 return HttpResponse('{"cmd":"add", "step": "not_match", "data": "Пальци не совпадают"}')
-            elif step.value == "add":
-                return HttpResponse('{"cmd":"add", "step": "add", "data": "Палец добавлен"}')
+            # elif Check_step("add"):
+            #     return HttpResponse('{"cmd":"add", "step": "add", "data": "Палец добавлен"}')
         else:
-            user = request.GET["user"]
-            user = user[5:]
-
-            contact = Contact.objects.get(id = user)
-            rfid = Rfid.objects.filter(contact = user)
-            rf = RF.objects.filter(contact = user)
-            finger = Finger.objects.filter(contact = user)
             return HttpResponse('{"cmd": "add_off"}')
 
 
     elif request.GET and "add_cancel" == request.GET["cmd"]:
         status = My_variable.objects.get(name = "finger_status")
-        step = My_variable.objects.get(name = "finger_info")
-        status.value = "no"
-        status.save()
-        step.value = "cancel"
-        step.save()
+        step = My_variable.objects.get(name = "finger_step")
+        Save_status("no")
+        Save_step("cancel")
         user = request.GET["user"]
         user = user[5:]
         contact = Contact.objects.get(id = user)

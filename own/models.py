@@ -21,6 +21,7 @@ class RF(models.Model):
 
 class Finger(models.Model):
     contact = models.ForeignKey(Contact, blank=True, null=True, default=None, on_delete=models.CASCADE)
+    number = models.DecimalField(blank=True, default=0, max_digits=15, decimal_places=0)
     finger = models.CharField(max_length = 15)
     activ = models.BooleanField(default=True)
 

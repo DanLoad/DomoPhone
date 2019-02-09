@@ -109,6 +109,7 @@ $(document).ready(function(){
       $('#bth_finger').text("Добавить");
       turn = 0;
       index = "off"
+      step = "off";
       $.get("users/finger_owned/", {cmd: 'add_cancel', user: $(".btn_active").attr("id") }, function(data) {
         $("#block_all_info").remove();
         $("#block_user_info").remove();

@@ -20,8 +20,8 @@ from settings.models import *
 
 ## Инициализация датчика
 def Read_finger(uart):
-    status = My_variable.objects.get(name = "finger_status")
-    if status.value == "add":
+
+    if Check_status("add"):
         Add_finger(uart)
     else:
         Check_finger(uart)
