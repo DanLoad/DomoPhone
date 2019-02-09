@@ -10,53 +10,74 @@ All rights reserved.
 import serial
 import time
 from pyfingerprint.pyfingerprint import PyFingerprint
-
+from settings.models import *
 
 ## Добавляет новый палец
 ##
-def Add_finger(status, uart):
+def Add_finger(uart):
+    info = My_variable.objects.get(name = "finger_info")
+    info.value = "wait_1"
+    info.save()
     ## Пытается зарегестрировать палец
     try:
         print('Прикладите палец...')
+        Delay_add = time.time() + 5
+        ID = ""
+        status = My_variable.objects.get(name = "finger_status")
+            ## Ждать пока не прочитается палец
+        print(info.value)
+        while status.value == "add" and info.value == "wait_1":
+            if uart.readImage() == True:
+                ## Преобразует изображение и сохраняет в буфер №1
+                uart.convertImage(0x01)
 
-        ## Ждать пока не прочитается палец
-        if uart.readImage() == True:
+                ## Проверяет, зарегистрирован ли палец
+                result = uart.searchTemplate()
+                positionNumber = result[0]
 
-            ## Преобразует изображение и сохраняет в буфер №1
-            uart.convertImage(0x01)
+                if not positionNumber >= 0:
+                    print('Уберите палец...')
+                    info.value = "remove"
+                    info.save()
+                    time.sleep(2)
 
-            ## Проверяет, зарегистрирован ли палец
-            result = uart.searchTemplate()
-            positionNumber = result[0]
+                    print('Снова прикладите палец...')
+                    info.value = "wait_2"
+                    info.save()
+                else:
+                    info.value = "exists"
+                    info.save()
+                    status.value = "no"
+                    status.save()
+                    print('Шаблон уже существует в позиции #' + str(positionNumber))
 
-            if not positionNumber >= 0:
-                print('Уберите палец...')
-                time.sleep(2)
 
-                print('Снова прикладите палец...')
-
-                ## Ждет пока снова не прочитает палец
-                while ( uart.readImage() == False ):
-                    pass
-
+                ## Ждет пока снова не прочитает пале
+        while status.value == "add" and info.value == "wait_2":
+            if uart.readImage() == True:
                 ## Преобразует изображение и сохраняет в буфер №2
                 uart.convertImage(0x02)
 
                 ## Сравнивает из двух буферов
-                if ( uart.compareCharacteristics() == 0 ):
-                    raise Exception('Пальцы не совпадают')
+                if uart.compareCharacteristics() == 0:
+                    info.value = "not_match"
+                    info.save()
+                    status.value = "no"
+                    status.save()
+                    print('Пальцы не совпадают')
+                else:
+                    ## Создает шаблон
+                    uart.createTemplate()
 
-                ## Создает шаблон
-                uart.createTemplate()
+                    ## Сохраняет шаблон
+                    positionNumber = uart.storeTemplate(1)
+                    info.value = "add"
+                    info.save()
+                    status.value = "no"
+                    status.save()
+                    print('Палец успешно зарегистрирован!')
+                    print('Новая позиция шаблона #' + str(positionNumber))
 
-                ## Сохраняет шаблон
-                positionNumber = f.storeTemplate(1)
-                print('Палец успешно зарегистрирован!')
-                print('Новая позиция шаблона #' + str(positionNumber))
-                exit(0)
-            else:
-                print('Шаблон уже существует в позиции #' + str(positionNumber))
-                exit(0)
 
 
     except Exception as e:

@@ -27,7 +27,6 @@ def user_owned(request):
     else:
         pass
 
-
 def all_owned(request):
     if request.GET and "all" == request.GET["cmd"]:
         contact = Contact.objects.filter()
@@ -38,8 +37,6 @@ def all_owned(request):
         return render(request, 'users/includes/info_all.html', locals())
     else:
         pass
-
-
 
 def rfid_owned(request):
 
@@ -196,7 +193,71 @@ def finger_owned(request):
         else:
             finger_id.activ = True
         finger_id.save()
+        return render(request, 'users/includes/own_user.html', locals())
+
+    elif request.GET and "add_start" == request.GET["cmd"]:
+        user = request.GET["user"]
+        user = user[5:]
+
+        user_finger = My_variable.objects.get(name = "finger_user")
+        user_finger.value = user
+        user_finger.save()
+        step = My_variable.objects.get(name = "finger_info")
+        step.value = "wait_1"
+        step.save()
+        status = My_variable.objects.get(name = "finger_status")
+        status.value = "add"
+        status.save()
+
+        return HttpResponse("Подождите...")
+
+    elif request.GET and "add_check" == request.GET["cmd"]:
+        info = My_variable.objects.get(name = "finger_print")
+        status = My_variable.objects.get(name = "finger_status")
+        step = My_variable.objects.get(name = "finger_info")
+        if status.value == "add":
+            if step.value == "wait":
+                return HttpResponse('{"cmd":"add", "step": "wait", "data": "Подождите..."}')
+            elif step.value == "wait_1":
+                return HttpResponse('{"cmd":"add", "step": "wait_1", "data": "Прикладите палец"}')
+            elif step.value == "remove":
+                return HttpResponse('{"cmd":"add", "step": "remove", "data": "Уберите палец"}')
+            elif step.value == "wait_2":
+                return HttpResponse('{"cmd":"add", "step": "wait_2", "data": "Сново прикладите палец"}')
+        elif status.value == "no":
+            if step.value == "exists":
+                return HttpResponse('{"cmd":"add", "step": "exists", "data": "Этот палец существует"}')
+            elif step.value == "not_match":
+                return HttpResponse('{"cmd":"add", "step": "not_match", "data": "Пальци не совпадают"}')
+            elif step.value == "add":
+                return HttpResponse('{"cmd":"add", "step": "add", "data": "Палец добавлен"}')
+        else:
+            user = request.GET["user"]
+            user = user[5:]
+
+            contact = Contact.objects.get(id = user)
+            rfid = Rfid.objects.filter(contact = user)
+            rf = RF.objects.filter(contact = user)
+            finger = Finger.objects.filter(contact = user)
+            return HttpResponse('{"cmd": "add_off"}')
+
+
+    elif request.GET and "add_cancel" == request.GET["cmd"]:
+        status = My_variable.objects.get(name = "finger_status")
+        step = My_variable.objects.get(name = "finger_info")
+        status.value = "no"
+        status.save()
+        step.value = "cancel"
+        step.save()
+        user = request.GET["user"]
+        user = user[5:]
+        contact = Contact.objects.get(id = user)
+        rfid = Rfid.objects.filter(contact = user)
+        rf = RF.objects.filter(contact = user)
+        finger = Finger.objects.filter(contact = user)
 
         return render(request, 'users/includes/own_user.html', locals())
+
+
     else:
         pass

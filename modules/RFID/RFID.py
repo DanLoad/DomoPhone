@@ -53,7 +53,7 @@ def Add_uid(status, uart):
     uart.flushInput()
     Delay_add = time.time() + 5
     ID = ""
-    while True:
+    while status.value == "add":
         if uart.inWaiting() > 0:
             read_add = uart.read()
             if read_add == b'\x02':

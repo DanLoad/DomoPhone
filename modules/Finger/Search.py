@@ -12,6 +12,7 @@ import serial
 import hashlib
 from pyfingerprint.pyfingerprint import PyFingerprint
 from modules.Finger.Add import *
+from settings.models import *
 
 
 ## Поиск пальца
@@ -19,12 +20,12 @@ from modules.Finger.Add import *
 
 ## Инициализация датчика
 def Read_finger(uart):
-    if uart.isOpen():
-        status = My_variable.objects.get(name = "finger_status")
-        if status.value == "add":
-            Add_finger(status, uart)
-        else:
-            Check_finger(uart)
+    status = My_variable.objects.get(name = "finger_status")
+    if status.value == "add":
+        Add_finger(uart)
+    else:
+        Check_finger(uart)
+
 
 
 def Check_finger(uart):
@@ -60,10 +61,8 @@ def Check_finger(uart):
                 ## Хеширует характеристики шаблона
                 print('SHA-2 hash of template: ' + hashlib.sha256(characterics).hexdigest())
                 print("open door>>>>>>>>>>>>>")
-                exit(0)
             else:
                 print('Совпадение не найдено!')
-                exit(0)
 
 
     except Exception as e:
