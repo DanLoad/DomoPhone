@@ -4,9 +4,8 @@ from users.models import *
 from own.models import *
 from users.settings import *
 from settings.models import *
-from modules.Finger.Add import *
+from modules.Finger.DB import *
 import json
-
 
 def index(request):
     if not request.GET:
@@ -77,6 +76,14 @@ def rfid_owned(request):
         rfid_id.save()
 
         return render(request, 'users/includes/own_user.html', locals())
+
+
+    elif request.GET and "add_stop" == request.GET["cmd"]:
+        status = My_variable.objects.get(name = "rfid_status")
+        status.value = "no"
+        status.save()
+
+        return HttpResponse("Отменено")
 
     elif request.GET and "add_start" == request.GET["cmd"]:
         user = request.GET["user"]
@@ -168,14 +175,16 @@ def finger_owned(request):
         user = user[5:]
         index = index[7:]
 
+        finger_position = My_variable.objects.get(name = "finger_position")
+        finger_position.value = index
+        finger_position.save()
+        Save_status("delete")
+        time.sleep(0.5)
+
         contact = Contact.objects.get(id = user)
         rfid = Rfid.objects.filter(contact = user)
         rf = RF.objects.filter(contact = user)
         finger = Finger.objects.filter(contact = user)
-
-        del_finger = Finger.objects.get(id = index)
-        del_finger.delete()
-
         return render(request, 'users/includes/own_user.html', locals())
 
     elif request.GET and "activ" == request.GET["cmd"]:
@@ -204,8 +213,9 @@ def finger_owned(request):
         user_finger = My_variable.objects.get(name = "finger_user")
         user_finger.value = user
         user_finger.save()
-        Save_step("wait")
         Save_status("add")
+        Save_step("wait")
+
 
         return HttpResponse("Подождите...")
 
@@ -220,13 +230,27 @@ def finger_owned(request):
                 return HttpResponse('{"cmd":"add", "step": "remove", "data": "Уберите палец"}')
             elif Check_step("wait_2"):
                 return HttpResponse('{"cmd":"add", "step": "wait_2", "data": "Сново прикладите палец"}')
+            else:
+                step = My_variable.objects.get(name = "finger_step")
+                status = My_variable.objects.get(name = "finger_status")
+                return HttpResponse('{"cmd":"hz", "step": "' + step.value + '", "status": "' + status.value + '"}')
         elif Check_status("no"):
             if Check_step("exists"):
                 return HttpResponse('{"cmd":"add", "step": "exists", "data": "Этот палец существует"}')
             elif Check_step("not_match"):
                 return HttpResponse('{"cmd":"add", "step": "not_match", "data": "Пальци не совпадают"}')
-            # elif Check_step("add"):
-            #     return HttpResponse('{"cmd":"add", "step": "add", "data": "Палец добавлен"}')
+            elif Check_step("add"):
+                return HttpResponse('{"cmd":"add", "step": "not_match", "data": "Палец добавлен"}')
+            elif Check_step("time"):
+                return HttpResponse('{"cmd":"add", "step": "add", "data": "Время Вышло"}')
+            elif Check_step("full"):
+                return HttpResponse('{"cmd":"add", "step": "add", "data": "База заполнена"}')
+            elif Check_step("error"):
+                return HttpResponse('{"cmd":"add", "step": "add", "data": "Произошла ошибка"}')
+            else:
+                step = My_variable.objects.get(name = "finger_step")
+                status = My_variable.objects.get(name = "finger_status")
+                return HttpResponse('{"cmd":"hz", "step": "' + step.value + '", "status": "' + status.value + '"}')
         else:
             return HttpResponse('{"cmd": "add_off"}')
 

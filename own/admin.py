@@ -24,7 +24,7 @@ admin.site.register(RF, AdminRF)
 
 
 class AdminFinger (admin.ModelAdmin):
-    list_display = ["contact","finger","activ"]
+    list_display = ["contact","number","finger","activ"]
     list_filter = ['contact']
 
     class Meta:

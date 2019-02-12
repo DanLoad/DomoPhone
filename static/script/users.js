@@ -63,6 +63,12 @@ $(document).ready(function(){
     } else if ($('#bth_rfid').text() == "Отмена") {
       $("#add_rfid").hide();
       $('#bth_rfid').text("Добавить");
+
+      $.get("users/rfid_owned/", {cmd: 'add_stop'}, function(data) {
+        console.log("g1");
+        console.log(data);
+        $('#rfid_info').text(data);
+      });
     }
     });   //Добавить RFID
 
@@ -237,6 +243,11 @@ window.setInterval(function(){
           turn = 0;
           index = "off"
         });
+      } else if (comand.cmd == "hz") {
+        console.log("hz>>>>>>>>>>>>>>");
+        console.log(comand.status);
+        console.log(comand.step);
+        console.log("hz>>>>>>>>>>>>>>>");
       }
     });
 

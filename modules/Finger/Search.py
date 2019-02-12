@@ -12,6 +12,7 @@ import serial
 import hashlib
 from pyfingerprint.pyfingerprint import PyFingerprint
 from modules.Finger.Add import *
+from modules.Finger.Delete import *
 from settings.models import *
 
 
@@ -23,12 +24,23 @@ def Read_finger(uart):
 
     if Check_status("add"):
         Add_finger(uart)
+    elif Check_status("delete"):
+        Delete_finger(uart)
     else:
         Check_finger(uart)
 
 
-
 def Check_finger(uart):
+    # try:
+    #     for place in range(6):
+    #         if ( uart.deleteTemplate(place) == True ):
+    #             print('Template deleted!')
+    #     exit(0)
+    #
+    # except Exception as e:
+    #     print('Operation failed!')
+    #     print('Exception message: ' + str(e))
+    #     exit(1)
     ## Пытается найти палец
     try:
         #print('Waiting for finger...')
