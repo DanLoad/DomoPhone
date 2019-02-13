@@ -85,7 +85,8 @@ CRONTAB_LOCK_JOBS = True
 
 CRONJOBS = [
     ("* * * * *", 'main.cron.Finger_loop', '>> /home/log/finger_loop.log'),
-    ("* * * * *", 'main.cron.Rfid_loop', '>> /home/log/rfid_loop.log')
+    ("* * * * *", 'main.cron.Rfid_loop', '>> /home/log/rfid_loop.log'),
+    ("* * * * *", 'main.cron.RF_loop', '>> /home/log/rf_loop.log')
 ]
 
 # Database

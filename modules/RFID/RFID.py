@@ -1,6 +1,7 @@
 import serial
 import time
 import binascii
+import logging
 from own.models import *
 from settings.models import *
 from users.models import *
@@ -9,7 +10,10 @@ import re
 Delay_read = 0
 activ_add_uid = False
 
+
 def Read_uid(uart):
+    logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
+                        format='%(asctime)-15s - [%(levelname)s] %(module)s: %(message)s', )
     if uart.isOpen():
         status = My_variable.objects.get(name = "rfid_status")
         if status.value == "add":
@@ -39,7 +43,7 @@ def Check_uid(uart):
                     print (read_byte.decode('utf8'))
                 print (ID)
                 if re.match("^[A-Za-z0-9]*$", ID):
-                    print("open door>>>>>>>>>>>>>")
+                    Rfid_read(ID)
                     Delay_read = time.time() + 3
                 else:
                     uart.flushInput()
@@ -99,3 +103,13 @@ def Add_uid(status, uart):
             status.value = "time"
             status.save()
             break
+
+
+def Rfid_read(uid):
+    rfids = Rfid.objects.all()
+    if any(str(uid) == id.rf for id in rfids):
+        model = Rfid.objects.get(rf = uid)
+        logging.info("Open door > [Пользователь: " + model.contact.name + " Код: " + model.rf + "]")
+
+    else:
+        logging.info("no open door >>>>>>>>>>>")

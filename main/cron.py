@@ -1,4 +1,5 @@
 from modules.RFID.RFID import *
+from modules.RF.Loop import *
 from modules.Finger.Search import *
 import serial
 
@@ -33,3 +34,9 @@ def Rfid_loop():
     print("loop")
     while True:
         Read_uid(uart)
+
+
+
+def RF_loop():
+    while True:
+        RF_run()
