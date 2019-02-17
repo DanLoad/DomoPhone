@@ -12,7 +12,8 @@ class Rfid(models.Model):
 
 class RF(models.Model):
     contact = models.ForeignKey(Contact, blank=True, null=True, default=None, on_delete=models.CASCADE)
-    rf = models.CharField(max_length = 15)
+    up = models.DecimalField(blank=True, default=0, max_digits=15, decimal_places=0)
+    down = models.DecimalField(blank=True, default=0, max_digits=15, decimal_places=0)
     activ = models.BooleanField(default=True)
 
     def __str__(self):

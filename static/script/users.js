@@ -1,6 +1,7 @@
 var index = "off";
 var turn = 0;
 var step = "off";
+var modules = "not";
 $(document).ready(function(){
 
   $('body').on('click', '#list_name p', function(){
@@ -39,17 +40,17 @@ $(document).ready(function(){
 
 
 //Добавить
-  $('body').on('click', '#bth_rfid', function(){
-    if ($('#bth_rfid').text() == "Добавить") {
+  $('body').on('click', '#add_rfid', function(){
+    if ($('#add_rfid').text() == "Добавить") {
       console.log("1");
-      $("#add_rfid").show();
-      $("#add_rf").hide(); $('#bth_rf').text("Добавить");
-      $("#add_finger").hide(); $('#bth_finger').text("Добавить");
-      $('#bth_rfid').text("Отмена");
+      $("#div_add_rfid").show();
+      $("#div_add_rf").hide(); $('#add_rf').text("Добавить");
+      $("#div_add_finger").hide(); $('#add_finger').text("Добавить");
+      $('#add_rfid').text("Отмена");
       console.log("2");
 
 
-      $.get("users/rfid_owned/", {cmd: 'add_start', user: $(".btn_active").attr("id") }, function(data) {
+      $.get("users/run_rfid/", {cmd: 'start', user: $(".btn_active").attr("id") }, function(data) {
         console.log("g1");
         console.log(data);
         $('#rfid_info').text(data);
@@ -57,14 +58,14 @@ $(document).ready(function(){
 
        console.log("3");
        turn = 14;
-       index = "rfid_on"
+       modules = "rfid"
 
        console.log("end");
-    } else if ($('#bth_rfid').text() == "Отмена") {
-      $("#add_rfid").hide();
-      $('#bth_rfid').text("Добавить");
+    } else if ($('#add_rfid').text() == "Отмена") {
+      $("#div_add_rfid").hide();
+      $('#add_rfid').text("Добавить");
 
-      $.get("users/rfid_owned/", {cmd: 'add_stop'}, function(data) {
+      $.get("users/run_rfid/", {cmd: 'stop'}, function(data) {
         console.log("g1");
         console.log(data);
         $('#rfid_info').text(data);
@@ -72,31 +73,34 @@ $(document).ready(function(){
     }
     });   //Добавить RFID
 
-  $('body').on('click', '#bth_rf', function(){
-    if ($('#bth_rf').text() == "Добавить") {
+  $('body').on('click', '#add_rf', function(){
+    if ($('#add_rf').text() == "Добавить") {
 
-      $("#add_rfid").hide(); $('#bth_rfid').text("Добавить");
-      $("#add_rf").show();
-      $("#add_finger").hide(); $('#bth_finger').text("Добавить");
-      $('#bth_rf').text("Отмена");
+      $("#div_add_rfid").hide(); $('#add_rfid').text("Добавить");
+      $("#div_add_rf").show();
+      $("#div_add_finger").hide(); $('#add_finger').text("Добавить");
+      $('#add_rf').text("Отмена");
 
-      $.get("users/rf_owned/", {cmd: 'add', user: $(".btn_active").attr("id") }, function(data) {
-         alert(data);
-       });
+      $.get("users/run_rf/", {cmd: 'open', user: $(".btn_active").attr("id") }, function(data) {
+        $('#rec_up_info').text("0000000000");
+        $('#rec_down_info').text("0000000000");
+      });
 
-    } else if ($('#bth_rf').text() == "Отмена") {
-      $("#add_rf").hide();
-      $('#bth_rf').text("Добавить");
+    } else if ($('#add_rf').text() == "Отмена") {
+      $("#div_add_rf").hide();
+      $('#add_rf').text("Добавить");
+      $.get("users/run_rf/", {cmd: 'stop', user: $(".btn_active").attr("id") }, function(data) {
+      });
     }
   });   //Добавить RF
 
-  $('body').on('click', '#bth_finger', function(){
-    if ($('#bth_finger').text() == "Добавить") {
+  $('body').on('click', '#add_finger', function(){
+    if ($('#add_finger').text() == "Добавить") {
       console.log("1");
-      $("#add_rfid").hide(); $('#bth_rfid').text("Добавить");
-      $("#add_rf").hide(); $('#bth_rf').text("Добавить");
-      $("#add_finger").show();
-      $('#bth_finger').text("Отмена");
+      $("#div_add_rfid").hide(); $('#add_rfid').text("Добавить");
+      $("#div_add_rf").hide(); $('#add_rf').text("Добавить");
+      $("#div_add_finger").show();
+      $('#add_finger').text("Отмена");
 
       $.get("users/finger_owned/", {cmd: 'add_start', user: $(".btn_active").attr("id") }, function(data) {
         console.log("g1");
@@ -110,9 +114,9 @@ $(document).ready(function(){
 
       console.log("end");
 
-    } else if ($('#bth_finger').text() == "Отмена") {
-      $("#add_finger").hide();
-      $('#bth_finger').text("Добавить");
+    } else if ($('#add_finger').text() == "Отмена") {
+      $("#div_add_finger").hide();
+      $('#add_finger').text("Добавить");
       turn = 0;
       index = "off"
       step = "off";
@@ -124,11 +128,31 @@ $(document).ready(function(){
     }
   });   //Добавить Finger
 
+  $('body').on('click', '#rec_up', function(){
+    $.get("users/run_rf/", {cmd: 'up', user: $(".btn_active").attr("id") }, function(data) {
+      console.log("g1");
+      console.log(data);
+      modules = "rf";
+      turn = 15;
+      $('#rec_info').text(data);
+    });
+  });   // Запись на открытие ворот
+
+  $('body').on('click', '#rec_down', function(){
+    $.get("users/run_rf/", {cmd: 'down', user: $(".btn_active").attr("id") }, function(data) {
+      console.log("g1");
+      console.log(data);
+      modules = "rf";
+      turn = 15;
+      $('#rec_info').text(data);
+    });
+  });   // Запись на закрытие ворот
+
 
 //Удалить
   $('body').on('click', '.delete_rfid', function(){
     if(confirm("Вы действительно хотите удалить?")) {
-        $.get("users/rfid_owned/", {cmd: 'delete', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
+        $.get("users/run_rfid/", {cmd: 'delete', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
          $("#block_all_info").remove();
          $("#block_user_info").remove();
          $('#block_info').append(data);
@@ -159,11 +183,11 @@ $(document).ready(function(){
 
 //Актевировать - Деактевировать
   $('body').on('click', '.change_activ_rfid', function(){
-        $.get("users/rfid_owned/", {cmd: 'activ', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
-         $("#block_all_info").remove();
-         $("#block_user_info").remove();
-         $('#block_info').append(data);
-       });
+      $.get("users/run_rfid/", {cmd: 'activ', index: $(this).attr("id"), user: $(".btn_active").attr("id") }, function(data) {
+        $("#block_all_info").remove();
+        $("#block_user_info").remove();
+        $('#block_info').append(data);
+     });
   });   //Деактевировать RFID
 
   $('body').on('click', '.change_activ_rf', function(){
@@ -187,6 +211,45 @@ $(document).ready(function(){
 });
 
 //Проверка состояния
+
+window.setInterval(function(){
+  if (modules == "rfid" || modules == "rf" || modules == "finger") {
+    $.get("users/run_" + modules + "/", {cmd: 'check', user: $(".btn_active").attr("id") }, function(json) {
+      console.log("g1");
+      console.log(json);
+      comand = JSON.parse(json);
+      if (comand.cmd == "rec") {
+        turn = turn - 1;
+      } else if (comand.cmd == "no") {
+        $('#' + modules + '_info').html(comand.data);
+        modules = "off"
+        turn = 0;
+      } else if (comand.cmd == "save") {
+        $.get("users/user_owned/", {cmd: 'user', user: $(this).attr("id") }, function(data) {
+           $("#block_all_info").remove();
+           $("#block_user_info").remove();
+           $('#block_info').append(data);
+        });
+        modules = "off"
+        turn = 0;
+      } else if (comand.cmd == "time") {
+        modules = "off"
+        turn = 0;
+        $("#div_add_" + modules).hide();
+        $("#add_" + modules).text("Добавить");
+      } else {
+        console.log("xxxxxxxxxxxxxx");
+      }
+    });
+  }
+}, 1000);
+
+
+
+
+
+
+
 
 window.setInterval(function(){
   if(index == "rfid_on" & turn > 0) {
@@ -253,5 +316,30 @@ window.setInterval(function(){
 
 
 
+  } else if (index == "rf_on" & turn > 0) {
+    console.log("rf_on");
+    $.get("users/rf_owned/", {cmd: 'rec_check'}, function(json) {
+      comand = JSON.parse(json);
+      if (comand.cmd == "rec") {
+        turn = turn - 1;
+
+      } else if (comand.cmd == "rec_no") {
+        $('#rf_info').text(comand.data);
+        turn = 0;
+      } else if (comand.cmd == "rec_up_yes") {
+        $('#rec_info').text(comand.data);
+        $('#rec_up_info').text(comand.code);
+        turn = 0;
+      } else if (comand.cmd == "rec_down_yes") {
+        $('#rec_info').text(comand.data);
+        $('#rec_down_info').text(comand.code);
+        turn = 0;
+      } else if (comand.cmd == "add_yes") {
+
+      } else {
+        turn = 0;
+      }
+
+    });
   }
 }, 1000);

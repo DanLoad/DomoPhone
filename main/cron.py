@@ -1,7 +1,12 @@
 from modules.RFID.RFID import *
 from modules.RF.Loop import *
 from modules.Finger.Search import *
+from users.template.users.run_db import *
 import serial
+
+
+logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
+                    format='%(asctime)-15s - [%(levelname)s] %(module)s: %(message)s', )
 
 
 
@@ -40,3 +45,13 @@ def Rfid_loop():
 def RF_loop():
     while True:
         RF_run()
+
+
+
+def Init_loop():
+    RunReset()
+    delayTime = 0
+    while True:
+        if time.time() > Delay_read:
+            Delay_read = time.time() + 3
+            RunTime()

@@ -33,9 +33,12 @@ def RF_run():
         if rfdevice.rx_code_timestamp != timestamp:
             timestamp = rfdevice.rx_code_timestamp
             if rfdevice.rx_code > 100000:
-                status = My_variable.objects.get(name = "rf_status")
-                if status.value == "add":
-                    RF_add(rfdevice.rx_code, rfdevice.rx_pulselength, rfdevice.rx_proto)
+
+
+                if RunCheckStatus("rf", "up", "no"):
+                    RF_rec("up", rfdevice.rx_code, rfdevice.rx_pulselength, rfdevice.rx_proto)
+                elif RunCheckStatus("rf", "down", "no"):
+                    RF_rec("down", rfdevice.rx_code, rfdevice.rx_pulselength, rfdevice.rx_proto)
                 else:
                     RF_read(rfdevice.rx_code, rfdevice.rx_pulselength, rfdevice.rx_proto)
                 logging.info(str(rfdevice.rx_code) +
@@ -51,16 +54,18 @@ def exithandler(signal, frame):
 
 
 
-def RF_add(code, pulse, proto):
-    pass
-
+def RF_rec(cnob, code, pulse, proto):
+    #rfs = RF.objects.all()
+    if RunCheckValue("rf", code):
+        if cnob == "up":
+            RunSave("rfup", code)
+        elif cnob == "down":
+            RunSave("rfdown", code)
 
 
 def RF_read(code, pulse, proto):
-    rfs = RF.objects.all()
-    if any(str(code) == id.rf for id in rfs):
-        model = RF.objects.get(rf = code)
-        logging.info("Open door > [Пользователь: " + model.contact.name + " Код: " + model.rf + "]")
 
-    else:
+    if RunAccess("rf", code):
         logging.info("no open door >>>>>>>>>>>")
+    else:
+        logging.info("Open door > [Пользователь: " + model.contact.name + " Код: " + model.rf + "]")

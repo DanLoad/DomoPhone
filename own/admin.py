@@ -14,7 +14,7 @@ admin.site.register(Rfid, AdminRfid)
 
 
 class AdminRF (admin.ModelAdmin):
-    list_display = ["contact","rf","activ"]
+    list_display = ["contact","up","down","activ"]
     list_filter = ['contact']
 
     class Meta:

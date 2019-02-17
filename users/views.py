@@ -4,7 +4,8 @@ from users.models import *
 from own.models import *
 from users.settings import *
 from settings.models import *
-from modules.Finger.DB import *
+from users.templates.users.run_db import *
+from modules.Finger.DB import * ###
 import json
 
 def index(request):
@@ -165,6 +166,62 @@ def rf_owned(request):
         user = request.GET["user"]
         mom = request.session.get('num')
         return HttpResponse(mom)
+
+    elif request.GET and "add_open" == request.GET["cmd"]:
+        up = My_variable.objects.get(name = "rf_up")
+        down = My_variable.objects.get(name = "rf_down")
+        up.value = 0000000000
+        down.value = 0000000000
+        up.save()
+        down.save()
+        return HttpResponse("ok")
+
+    elif request.GET and "add_cancel" == request.GET["cmd"]:
+        status = My_variable.objects.get(name = "rf_status")
+        status.value = "no"
+        status.save()
+        return HttpResponse("ok")
+
+    elif request.GET and "rec_up" == request.GET["cmd"]:
+        user = request.GET["user"]
+        mom = request.session.get('num')
+
+        status = My_variable.objects.get(name = "rf_status")
+        status.value = "rec_up"
+        status.save()
+
+        return HttpResponse("Нажмите на кнопку брелка рядом с приемником")
+
+    elif request.GET and "rec_down" == request.GET["cmd"]:
+        user = request.GET["user"]
+        mom = request.session.get('num')
+
+        status = My_variable.objects.get(name = "rf_status")
+        status.value = "rec_down"
+        status.save()
+
+        return HttpResponse("Нажмите на кнопку брелка рядом с приемником")
+
+    elif request.GET and "rec_check" == request.GET["cmd"]:
+
+        status = My_variable.objects.get(name = "rf_status")
+        if status.value == "rec_up" or status.value == "rec_down":
+            return HttpResponse('{"cmd": "rec"}')
+        elif status.value == "rec_no":
+            code = My_variable.objects.get(name = "rf_print")
+            return HttpResponse('{"cmd": "rec_no", "data": "' + code.value + '"}')
+        elif status.value == "rec_up_yes":
+            code = My_variable.objects.get(name = "rf_up")
+            return HttpResponse('{"cmd": "rec_up_yes", "data": "OK", "code": "' + code.value + '"}')
+        elif status.value == "rec_down_yes":
+            code = My_variable.objects.get(name = "rf_down")
+            return HttpResponse('{"cmd": "rec_down_yes", "data": "OK", "code": "' + code.value + '"}')
+        elif status.value == "add_yes":
+            code = My_variable.objects.get(name = "rf_status")
+            return HttpResponse('{"cmd": "add_yes", "data": "' + info.value + '"}')
+        else:
+            return HttpResponse('{"cmd": "no"}')
+
     else:
         pass
 
@@ -272,3 +329,101 @@ def finger_owned(request):
 
     else:
         pass
+
+
+def Run_rfid(request):
+    if request.GET and "start" == request.GET["cmd"]:
+        user = request.GET["user"]
+        user = user[5:]
+        RunStart(user, "rfid", "rec", "no")
+        return HttpResponse("Поднесите RFID метку к считывателю")
+    elif request.GET and "stop" == request.GET["cmd"]:
+        RunStop()
+        return HttpResponse("Отменено")
+
+    elif request.GET and "delete" == request.GET["cmd"]:
+        user = request.GET["user"]
+        index = request.GET["index"]
+        user = user[5:]
+        index = index[5:]
+
+        contact = Contact.objects.get(id = user)
+        rfid = Rfid.objects.filter(contact = user)
+        rf = RF.objects.filter(contact = user)
+        finger = Finger.objects.filter(contact = user)
+
+        RunDelete("rfid", index)
+
+        return render(request, 'users/includes/own_user.html', locals())
+
+    elif request.GET and "activ" == request.GET["cmd"]:
+        user = request.GET["user"]
+        index = request.GET["index"]
+        user = user[5:]
+        index = index[11:]
+
+        RunActiv("rfid", index)
+        contact = Contact.objects.get(id = user)
+        rfid = Rfid.objects.filter(contact = user)
+        rf = RF.objects.filter(contact = user)
+        finger = Finger.objects.filter(contact = user)
+
+        return render(request, 'users/includes/own_user.html', locals())
+
+    elif request.GET and "check" == request.GET["cmd"]:
+        info = My_variable.objects.get(name = "rfid_print")
+        status = My_variable.objects.get(name = "rfid_status")
+        if status.value == "rec":
+            return HttpResponse('{"cmd": "rec"}')
+        elif status.value == "no":
+            return HttpResponse('{"cmd": "no", "data": "' + RunRead() + '"}')
+        elif status.value == "time":
+            return HttpResponse('{"cmd": "time"}')
+        elif status.value == "save":
+            return HttpResponse('{"cmd": "save"}')
+        else:
+            return HttpResponse('{"cmd": "xxx"}')
+
+def Run_rf(request):
+    if request.GET and "open" == request.GET["cmd"]:
+        user = request.GET["user"]
+        user = user[5:]
+        RunStart(user, "rf", "open", "no")
+        return HttpResponse("ok")
+    elif request.GET and "stop" == request.GET["cmd"]:
+        RunStop()
+        return HttpResponse("Отменено")
+    elif request.GET and "up" == request.GET["cmd"]:
+        user = request.GET["user"]
+        user = user[5:]
+        RunStart(user, "rf", "up", "no")
+        return HttpResponse("Нажмите на кнопку брелка рядом с приемником")
+    elif request.GET and "down" == request.GET["cmd"]:
+        user = request.GET["user"]
+        user = user[5:]
+        RunStart(user, "rf", "down", "no")
+        return HttpResponse("Нажмите на кнопку брелка рядом с приемником")
+    elif request.GET and "activ" == request.GET["cmd"]:
+        user = request.GET["user"]
+        index = request.GET["index"]
+        user = user[5:]
+        index = index[11:]
+        RunActiv("rf", index)
+        contact = Contact.objects.get(id = user)
+        rfid = Rfid.objects.filter(contact = user)
+        rf = RF.objects.filter(contact = user)
+        finger = Finger.objects.filter(contact = user)
+        return render(request, 'users/includes/own_user.html', locals())
+    elif request.GET and "check" == request.GET["cmd"]:
+        info = My_variable.objects.get(name = "rfid_print")
+        status = My_variable.objects.get(name = "rfid_status")
+        if status.value == "rec":
+            return HttpResponse('{"cmd": "rec"}')
+        elif status.value == "no":
+            return HttpResponse('{"cmd": "no", "data": "' + RunRead() + '"}')
+        elif status.value == "time":
+            return HttpResponse('{"cmd": "time"}')
+        elif status.value == "save":
+            return HttpResponse('{"cmd": "save"}')
+        else:
+            return HttpResponse('{"cmd": "xxx"}')
