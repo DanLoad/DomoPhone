@@ -1,19 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-PyFingerprint
-Copyright (C) 2015 Bastian Raschke <bastian.raschke@posteo.de>
-All rights reserved.
-
-"""
 import time
 import serial
 import hashlib
 from pyfingerprint.pyfingerprint import PyFingerprint
 from modules.Finger.Add import *
-from modules.Finger.Delete import *
 from settings.models import *
+from users.templates.users.run_db import *
 
 
 ## Поиск пальца
@@ -22,28 +16,16 @@ from settings.models import *
 ## Инициализация датчика
 def Read_finger(uart):
 
-    if Check_status("add"):
+    if RunCheckStatus("finger", "rec", "one"):
         Add_finger(uart)
-    elif Check_status("delete"):
+    elif RunCheckStatus("finger", "delete", "no"):
         Delete_finger(uart)
     else:
         Check_finger(uart)
 
 
 def Check_finger(uart):
-    # try:
-    #     for place in range(6):
-    #         if ( uart.deleteTemplate(place) == True ):
-    #             print('Template deleted!')
-    #     exit(0)
-    #
-    # except Exception as e:
-    #     print('Operation failed!')
-    #     print('Exception message: ' + str(e))
-    #     exit(1)
-    ## Пытается найти палец
     try:
-        #print('Waiting for finger...')
         ## Ждет пока не прочитает палец
         if uart.readImage() == True:
 
@@ -60,9 +42,6 @@ def Check_finger(uart):
 
                 print('Найден шаблон в позиции #' + str(positionNumber))
                 print('Оценка точности: ' + str(accuracyScore))
-
-                ## OPTIONAL stuff
-                ##
 
                 ## Загружает найденый шаблон в буфер №1
                 uart.loadTemplate(positionNumber, 0x01)
@@ -81,3 +60,11 @@ def Check_finger(uart):
         print('Operation failed!')
         print('Exception message: ' + str(e))
         exit(1)
+
+def Delete_finger(uart):
+    run = Status.objects.get(comand = "run")
+    number = int(run.number)
+    if positionNumber >= 0:
+        if ( uart.deleteTemplate(number) == True ):
+                 RunDelete("finger", number)
+                 RunChangeStatus("delete", "ok")

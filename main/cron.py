@@ -1,7 +1,7 @@
 from modules.RFID.RFID import *
-from modules.RF.Loop import *
+from modules.RF.RF import *
 from modules.Finger.Search import *
-from users.template.users.run_db import *
+#from users.templates.users.run_db import *
 import serial
 
 
@@ -53,5 +53,5 @@ def Init_loop():
     delayTime = 0
     while True:
         if time.time() > Delay_read:
-            Delay_read = time.time() + 3
             RunTime()
+            Delay_read = time.time() + 3

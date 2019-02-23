@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import argparse
 import signal
@@ -7,6 +8,7 @@ import time
 import logging
 from own.models import *
 from settings.models import *
+from users.templates.users.run_db import *
 
 from rpi_rf import RFDevice
 
@@ -58,9 +60,9 @@ def RF_rec(cnob, code, pulse, proto):
     #rfs = RF.objects.all()
     if RunCheckValue("rf", code):
         if cnob == "up":
-            RunSave("rfup", code)
+            RunSave("up", code)
         elif cnob == "down":
-            RunSave("rfdown", code)
+            RunSave("down", code)
 
 
 def RF_read(code, pulse, proto):
@@ -68,4 +70,4 @@ def RF_read(code, pulse, proto):
     if RunAccess("rf", code):
         logging.info("no open door >>>>>>>>>>>")
     else:
-        logging.info("Open door > [Пользователь: " + model.contact.name + " Код: " + model.rf + "]")
+        logging.info("Open door >>>>>>>>>>>>")

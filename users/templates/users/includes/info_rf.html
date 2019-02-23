@@ -5,7 +5,8 @@
     <br/>
     {% for r in rf %}
       <div class="content_bord">
-        <h5 {% if r.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %}>{{r.rf}}</h5>
+        <h5 {% if r.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %}>{{r.up}}</h5>
+        <h5 {% if r.activ %} class="yes_activ" {% else %} class="no_activ" {% endif %}>{{r.down}}</h5>
         <p class="btn btn_lite delete_rf" id="rf_{{r.id}}">Удалить</p>
         <p class="btn btn_lite change_activ_rf" id="rf_activ_{{r.id}}"> {% if r.activ %} Деактевировать {% else %} Актевировать {% endif %} </p>
       </div>
@@ -15,14 +16,14 @@
     <div class="content_bord hidden" id="div_add_rf">
       <div class="container">
           <div class="row"> <h5 class="col-sx-12 col-sm-12 col-md-12 col-lg-7">На открытие</h5>
-            <h4 class="col-sx-12 col-sm-12 col-md-12 col-lg-7" id = "rec_up_info">00000000000000</h4>
+            <h4 class="col-sx-12 col-sm-12 col-md-12 col-lg-7" id = "rec_up_info">000000000000</h4>
             <p class="btn btn_lite col-sx-12 col-sm-12 col-md-12 col-lg-4" id = "rec_up">Записать</p> </div>
             <div class="row"> <h5 class="col-sx-12 col-sm-12 col-md-12 col-lg-7">На закрытие</h5>
-            <h4 class="col-sx-12 col-sm-12 col-md-12 col-lg-7" id = "rec_down_info">000000000000000</h4>
+            <h4 class="col-sx-12 col-sm-12 col-md-12 col-lg-7" id = "rec_down_info">0000000000000</h4>
             <p class="btn btn_lite col-sx-12 col-sm-12 col-md-12 col-lg-4" id = "rec_down">Записать</p> </div>
       </div>
       <p id = "rec_info">Запишите в 2 параметра</p>
-      <p class="btn btn_lite">Подтвердить</p>
+      <p class="btn btn_lite" id = "save_rf">Подтвердить</p>
     </div>
     <p class="btn btn_lite" id="add_rf">Добавить</p>
 
