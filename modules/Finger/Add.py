@@ -3,14 +3,19 @@
 
 import serial
 import time
+import logging
 from pyfingerprint.pyfingerprint import PyFingerprint
 from settings.models import *
 from own.models import *
-#from modules.Finger.DB import *
+from users.templates.users.run_db import *
 
 ## Добавляет новый палец
 ##
 def Add_finger(uart):
+
+    def Read_uid(uart):
+        logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
+                            format='%(asctime)-15s - [%(levelname)s] %(module)s: %(message)s', )
 
     print('Currently used templates: ' + str(uart.getTemplateCount()) +'/'+ str(uart.getStorageCapacity()))
 
@@ -23,24 +28,26 @@ def Add_finger(uart):
                     uart.convertImage(0x01)
                     result = uart.searchTemplate()
                     positionNumber = result[0]
-
+                    logging.info("Позиция ..." + str(positionNumber))
                     if positionNumber >= 0:
-                        if RunCheckValue("rfid", positionNumber):
+                        if RunCheckValue("finger", positionNumber):
                             print('Template already exists at position #' + str(positionNumber))
+                            logging.info("Такой существует")
                             continue
                         else:
                             if ( uart.deleteTemplate(positionNumber) == True ):
                                 RunChangeStatus("rec", "one")
+                                logging.info("Сначало удалил и...")
                                 continue
                             else:
                                 RunChangeStatus("no", "error")
                                 continue
 
                     RunChangeStep("remove")
-                    print('Remove finger...')
+                    logging.info('Remove finger...')
                     time.sleep(2)
 
-                    print('Waiting for same finger again...')
+                    logging.info('Waiting for same finger again...')
                     RunChangeStep("two")
 
             while RunCheckStatus("finger", "rec", "two"):
@@ -55,8 +62,7 @@ def Add_finger(uart):
                         positionNumber = uart.storeTemplate(place)
                         if positionNumber == place:
                             RunSave("finger", place)
-                            print('Палец успешно зарегистрирован!')
-                            print('Новая позиция шаблона #' + str(positionNumber))
+                            logging.info("Палец сохранен в " + str(place))
                         else:
                             RunChangeStatus("no", "error")
         else:
@@ -64,6 +70,5 @@ def Add_finger(uart):
 
     except Exception as e:
         RunChangeStatus("no", "error")
-        print('Operation failed!')
-        print('Exception message: ' + str(e))
-        exit(1)
+        logging.info('Operation failed!')
+        logging.info('Exception message: ' + str(e))

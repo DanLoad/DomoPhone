@@ -50,8 +50,9 @@ def RF_loop():
 
 def Init_loop():
     RunReset()
+    logging.info("Рестарт")
     delayTime = 0
     while True:
-        if time.time() > Delay_read:
+        if time.time() > delayTime:
             RunTime()
-            Delay_read = time.time() + 3
+            delayTime = time.time() + 3

@@ -41,11 +41,14 @@ def RF_run():
                     RF_rec("up", rfdevice.rx_code, rfdevice.rx_pulselength, rfdevice.rx_proto)
                 elif RunCheckStatus("rf", "down", "no"):
                     RF_rec("down", rfdevice.rx_code, rfdevice.rx_pulselength, rfdevice.rx_proto)
+                elif RunCheckStatus("rf", "open", "no"):
+                    pass
                 else:
                     RF_read(rfdevice.rx_code, rfdevice.rx_pulselength, rfdevice.rx_proto)
-                logging.info(str(rfdevice.rx_code) +
-                             " [pulselength " + str(rfdevice.rx_pulselength) +
-                             ", protocol " + str(rfdevice.rx_proto) + "]")
+                    logging.info("Чтение")
+                    logging.info(str(rfdevice.rx_code) +
+                                 " [pulselength " + str(rfdevice.rx_pulselength) +
+                                 ", protocol " + str(rfdevice.rx_proto) + "]")
         time.sleep(0.01)
     rfdevice.cleanup()
 
@@ -57,17 +60,17 @@ def exithandler(signal, frame):
 
 
 def RF_rec(cnob, code, pulse, proto):
-    #rfs = RF.objects.all()
-    if RunCheckValue("rf", code):
-        if cnob == "up":
+    logging.info("Запись")
+    if cnob == "up":
+        if RunCheckValue("rfup", code):
             RunSave("up", code)
-        elif cnob == "down":
+    elif cnob == "down":
+        if RunCheckValue("rfdown", code):
             RunSave("down", code)
 
 
 def RF_read(code, pulse, proto):
-
     if RunAccess("rf", code):
-        logging.info("no open door >>>>>>>>>>>")
-    else:
         logging.info("Open door >>>>>>>>>>>>")
+    else:
+        logging.info("no open door >>>>>>>>>>>")

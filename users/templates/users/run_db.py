@@ -2,14 +2,17 @@ from users.settings import *
 from users.models import *
 from own.models import *
 from settings.models import *
+from django.db.models import Q
 import time
+
+timeOver = 20
 
 def RunStart(iuser, module, status, step):
     run = Status.objects.get(comand = "run")
     user = Contact.objects.get(id = iuser)
     run.module = module
     run.user = user
-    run.time = time.time()
+    run.time = time.time() + timeOver
     run.status = status
     run.step = step
     run.number = " "
@@ -71,6 +74,7 @@ def RunSave(module, value):
     elif (module == "finger"):
         add = Finger()
         add.finger = value
+        add.number = value
         add.contact = run.user
         add.save()
         run.status = "save"
@@ -81,9 +85,11 @@ def RunSave(module, value):
 
 def RunTime():
     run = Status.objects.get(comand = "run")
-    if time.time() > run.time:
-        run.status = "time"
-        run.save()
+    if run.time > 0:
+        if time.time() > run.time:
+            run.status = "time"
+            run.time = 0
+            run.save()
 
 
 
@@ -97,38 +103,86 @@ def RunCheckValue(module, value):
         else:
             run.print = RunPrint("Метка", value, list)
             run.status = "no"
-            # run.step = "exists"
             run.save()
             return False
-    elif module == "rf":
-        list = RF.objects.filter(up = value).filter(down = value)
+    elif module == "rfup" or module == "rfdown":
+        list = RF.objects.filter(Q(up = value) | Q(down = value))
         quantity = list.count()
         if quantity == 0:
-            return True
+            run = Status.objects.get(comand = "run")
+            if module == "rfup":
+                if run.down == value:
+                    run.print = "Уже записали в Закрыть"
+                    run.status = "no"
+                    run.save()
+                    return False
+                else:
+                    return True
+            elif module == "rfdown":
+                if run.up == value:
+                    run.print = "Уже записали в Открыть"
+                    run.status = "no"
+                    run.save()
+                    return False
+                else:
+                    return True
         else:
             run.print = RunPrint("Брелок", value, list)
             run.status = "no"
             run.save()
             return False
+    elif module == "rf":
+        run = Status.objects.get(comand = "run")
+        if not run.up == run.down:
+            if not run.up == 0 and not run.down == 0:
+                listUp = RF.objects.filter(Q(up = run.up) | Q(down = run.up))
+                quantityUp = listUp.count()
+                if quantityUp < 1:
+                    listDown = RF.objects.filter(Q(up = run.down) | Q(down = run.down))
+                    quantityDown = listDown.count()
+                    if quantityDown < 1:
+                        return True
+                    else:
+                        run.status = "wait"
+                        run.print = "Такой номер уже существует"
+                        run.save()
+                        return False
+                else:
+                    run.status = "wait"
+                    run.print = "Такой номер уже существует"
+                    run.save()
+                    return False
+            else:
+                run.status = "wait"
+                run.print = "Поля не могут быть без записи"
+                run.save()
+                return False
+        else:
+            run.status = "wait"
+            run.print = "Одинаковые номера"
+            run.save()
+            return False
+        return False
+
     elif module == "finger":
         list = Finger.objects.filter(number = value)
         quantity = list.count()
         if quantity == 0:
-            return True
+            return False
         else:
             run.print = RunPrint("Номер", value, list)
             run.status = "no"
             run.step = "exists"
             run.save()
-            return False
+            return True
     else:
         return False
 def RunPrint(name, value, list):
-    str = '<div style=\\"color:red\\">' + name + ': <br/>' + value + "<br/>Принадлежит:"
+    text = '<div style=\\"color:red\\">' + name + ': <br/>' + str(value) + "<br/>Принадлежит:"
     for uid in list:
-         str = str + "<br/>" + uid.contact.name + " " + uid.contact.firstname
-    str = str + "</div>"
-    return str
+         text = text + "<br/>" + uid.contact.name + " " + uid.contact.firstname
+    text = text + "</div>"
+    return text
 
 
 
@@ -148,27 +202,27 @@ def RunChangeStatus(status, step):
 def RunChangeStep(step):
     run = Status.objects.get(comand = "run")
     run.step = step
+    run.time = time.time() + timeOver
     run.save()
 
 
 def RunAccess(module, value):
     if module == "rfid":
-        rfids = Rfid.objects.all()
-        if any(str(value) == id.rfid for id in rfids):
+        list = Rfid.objects.filter(rfid = value)
+        quantity = list.count()
+        if quantity > 0:
             return True
         else:
             return False
     elif module == "rf":
-        rf = RF.objects.all()
-        if any(str(value) == id.up for id in rf):
-            return True
-        elif any(str(value) == id.down for id in rf):
+        list = RF.objects.filter(Q(up = value) | Q(down = value))
+        quantity = list.count()
+        if quantity > 0:
             return True
         else:
             return False
     else:
         return False
-
 
 def RunDelete(module, value):
     if (module == "rfid"):
@@ -177,6 +231,14 @@ def RunDelete(module, value):
     elif (module == "rf"):
         rf = RF.objects.get(id = value)
         rf.delete()
+    elif (module == "start"):
+        run = Status.objects.get(comand = "run")
+        run.number = value
+        run.step = "delete"
+        run.save()
+    elif (module == "finger"):
+        finger = Finger.objects.get(id = value)
+        finger.delete()
 
 def RunActiv(module, value):
     bool = " "
