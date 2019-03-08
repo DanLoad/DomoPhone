@@ -1,5 +1,8 @@
 # DomoPhone
 ![](https://img.shields.io/github/repo-size/DanLoad/DomoPhone.svg?style=flat)
+
+Проект на Orange PI
+
 ## Реализованно
 
   - RFID
